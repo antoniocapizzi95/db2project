@@ -7,12 +7,13 @@ class OracleClass(object) :
 
         dsn_tns = cx_Oracle.makedsn('localhost', '1521',
                                     service_name='orcl')  # if needed, place an 'r' before any parameter in order to address any special character such as '\'.
-        conn = cx_Oracle.connect(user=user, password=password,
+        self.conn = cx_Oracle.connect(user=user, password=password,
                                  dsn=dsn_tns)  # if needed, place an 'r' before any parameter in order to address any special character such as '\'. For example, if your user name contains '\', you'll need to place 'r' before the user name: user=r'User Name'
-        self.connection = conn.cursor()
+        self.connection = self.conn.cursor()
 
 
-
+    def closeConnection(self):
+        self.connection.close()
 
     def insertRegion(self,n4j):
         region = n4j.getRegion()
@@ -26,6 +27,7 @@ class OracleClass(object) :
             ins = ins.encode('ascii', 'ignore').decode('ascii')
             self.connection.execute(ins)
             i = i + 1
+        self.conn.commit()
 
     def insertFormeJuridique(self,n4j):
         formejur = n4j.getFormeJuridique()
@@ -37,6 +39,7 @@ class OracleClass(object) :
             ins = ins.encode('ascii', 'ignore').decode('ascii')
             self.connection.execute(ins)
             i = i + 1
+        self.conn.commit()
 
     def insertCodeAPE(self, n4j):
         codeape = n4j.getCodeApe()
@@ -49,6 +52,7 @@ class OracleClass(object) :
             ins = ins.encode('ascii', 'ignore').decode('ascii')
             self.connection.execute(ins)
             i = i + 1
+        self.conn.commit()
 
     def showTable(self,tableName):
         self.connection.execute('select * from '+tableName)  # use triple quotes if you want to spread your query across multiple lines
