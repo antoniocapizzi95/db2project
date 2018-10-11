@@ -1,4 +1,5 @@
 from neo4j.v1 import GraphDatabase
+from py2neo import Graph, Path
 
 class Neo4jClass(object):
 
@@ -19,3 +20,9 @@ class Neo4jClass(object):
                         "SET a.message = $message "
                         "RETURN a.message + ', from node ' + id(a)", message=message)
         return result.single()[0]
+
+    def trypy2neo(self):
+        graph = Graph("bolt://localhost:7687",auth= ('neo4j', 'prova'))
+        ris = graph.run("MATCH (r:Region) RETURN r LIMIT 4").data()
+        for elem in ris:
+            print(elem)
