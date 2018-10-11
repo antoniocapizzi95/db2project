@@ -1,28 +1,40 @@
 from neo4j.v1 import GraphDatabase
 from py2neo import Graph, Path
 
+
 class Neo4jClass(object):
 
     def __init__(self, uri, user, password):
-        self._driver = GraphDatabase.driver(uri, auth=(user, password))
+        self.graph = Graph(uri, auth=(user, password))
 
-    def close(self):
-        self._driver.close()
-
-    def print_greeting(self, message):
-        with self._driver.session() as session:
-            greeting = session.write_transaction(self._create_and_return_greeting, message)
-            print(greeting)
-
-    @staticmethod
-    def _create_and_return_greeting(tx, message):
-        result = tx.run("CREATE (a:Greeting) "
-                        "SET a.message = $message "
-                        "RETURN a.message + ', from node ' + id(a)", message=message)
-        return result.single()[0]
-
-    def trypy2neo(self):
-        graph = Graph("bolt://localhost:7687",auth= ('neo4j', 'prova'))
-        ris = graph.run("MATCH (r:Region) RETURN r LIMIT 4").data()
+    def getRegion(self):
+        ris = self.graph.run("MATCH (r:Region) RETURN r.name").data()
+        l = []
         for elem in ris:
-            print(elem)
+            e = elem['r.name']
+            l.append(e)
+        return l
+
+    def getFormeJuridique(self):
+        ris = self.graph.run("MATCH (f:FormeJuridique) RETURN f.name").data()
+        l = []
+        for elem in ris:
+            e = elem['f.name']
+            l.append(e)
+        return l
+
+    def getCodeApe(self):
+        ris = self.graph.run("MATCH (c:CodeAPE) RETURN c.code,c.name").data()
+        l = []
+        for elem in ris:
+            e = elem
+            l.append(e)
+        return l
+
+    def getVille(self): #to complete
+        ris = self.graph.run("MATCH (v:Ville) RETURN v.name").data()
+        l = []
+        for elem in ris:
+            e = elem
+            l.append(e)
+        return l
