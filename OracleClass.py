@@ -54,6 +54,12 @@ class OracleClass(object) :
             i = i + 1
         self.conn.commit()
 
+    def insertVille(self, n4j): #to complete
+        ville = n4j.getVille()
+        i = 0
+        #for elem in ville:
+
+
     def showTable(self,tableName):
         self.connection.execute('select * from '+tableName)  # use triple quotes if you want to spread your query across multiple lines
         for row in self.connection:
