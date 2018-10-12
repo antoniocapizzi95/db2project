@@ -57,11 +57,24 @@ class OracleClass(object) :
     def insertVille(self, n4j): #to complete
         ville = n4j.getVille()
         i = 0
-        #for elem in ville:
+        for elem in ville:
+            regname = elem['region']
+            regname = regname.encode('ascii', 'ignore').decode('ascii')
+            idreg = ''
+            self.connection.execute('select id from region where name='+"'"+regname+"'")
+            for row in self.connection:
+                idreg = row[0]
+                break
+            index = str(i)
+            idreg = str(idreg)
 
+            ins = "insert into ville (id,name,code_postal,id_region) values ('"+index+"',"+"'"+elem['ville']+"',"+"'"+elem['codepostal']+"',"+"'"+idreg+"')"
+            ins = ins.encode('ascii', 'ignore').decode('ascii')
+            self.connection.execute(ins)
+            i = i + 1
 
     def showTable(self,tableName):
         self.connection.execute('select * from '+tableName)  # use triple quotes if you want to spread your query across multiple lines
         for row in self.connection:
-            print(row[0], '-', row[1])  # this only shows the first two columns, to add an additional column you'll need to add , '-', row[2], etc.
+            print(row[0], '-', row[1],'-',row[2],'-',row[3])  # this only shows the first two columns, to add an additional column you'll need to add , '-', row[2], etc.
         # conn.close()

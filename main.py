@@ -6,6 +6,6 @@ o = OracleClass.OracleClass("antonio","prova")
 #o.insertFormeJuridique(n)
 #o.insertCodeAPE(n)
 o.insertVille(n)
-o.showTable("region")
+o.showTable("ville")
 
 

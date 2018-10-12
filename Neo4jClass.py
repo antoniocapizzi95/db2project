@@ -42,15 +42,22 @@ class Neo4jClass(object):
             villeid = nodeville.identity
             regname = nodereg['name']
 
-            riscodepostal = self.graph.run("MATCH p=()-[r:HAS_CITY]->(v:Ville) where ID(v) = "+str(villeid)+" RETURN p").data()[0]
-            nodecodepostal = riscodepostal['p'].nodes[0]
-            codepostal = nodecodepostal['name']
+            riscodepostal = []
+            codepostal = ''
+            try:
+                riscodepostal = self.graph.run("MATCH p=()-[r:HAS_CITY]->(v:Ville) where ID(v) = "+str(villeid)+" RETURN p").data()[0]
+                nodecodepostal = riscodepostal['p'].nodes[0]
+                codepostal = nodecodepostal['name']
+            except:
+                codepostal = '0'
+
+
             if len(ville) == 0:
                 ville.append({'ville': villename, 'region': regname, 'codepostal': codepostal})
             else:
                 add = 0
                 for e in ville:
-                    if villename in e['ville']:
+                    if villename.lower() == e['ville'].lower():
                         add = 0
                         break
                     else:
