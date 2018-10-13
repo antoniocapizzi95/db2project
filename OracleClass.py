@@ -69,7 +69,8 @@ class OracleClass(object) :
             index = str(i)
             idreg = str(idreg)
             villeMod = elem['ville'].replace("'"," ")
-            ins = "insert into ville (id,name,code_postal,id_region) values ('"+index+"',"+"'"+villeMod+"',"+"'"+elem['codepostal']+"',"+"'"+idreg+"')"
+            #ins = "insert into ville (id,name,code_postal,id_region) values ('"+index+"',"+"'"+villeMod+"',"+"'"+elem['codepostal']+"',"+"'"+idreg+"')"
+            ins = "insert into ville (id,name,id_region) values ('" + index + "'," + "'" + villeMod + "'," + "'" + idreg + "')"
             ins = ins.encode('ascii', 'ignore').decode('ascii')
             try:
                 self.connection.execute(ins)
@@ -77,6 +78,27 @@ class OracleClass(object) :
                 print("Errore: "+ins)
             i = i + 1
         self.conn.commit()
+
+    def insertAddresse(self,n4j):
+        print("insertAddresse inizio")
+        addresse = n4j.getAddresse()
+        i = 0
+        for elem in addresse:
+            ville = elem['ville']
+            ville = ville.replace("'"," ")
+            ville = ville.encode('ascii', 'ignore').decode('ascii')
+            idville = ''
+            self.connection.execute('select id from ville where name=' + "'" + ville + "'")
+            for row in self.connection:
+                idville = row[0]
+                break
+            if idville == '':
+                print("Errore, nessun id "+ville)
+            index = str(i)
+            idville = str(idville)
+            addresseMod = elem['addresse'].replace("'"," ")
+            ins = "insert into addresse (id,name,id_ville,code_postal) values ("+"'"+index+"',"+"'"+addresseMod+"',"+"'"+idville+"',"+"'"+elem['codepostal']+"'"+")"
+            ins = ins.encode('ascii', 'ignore').decode('ascii')
 
     def showTable(self,tableName):
         self.connection.execute('select * from '+tableName)  # use triple quotes if you want to spread your query across multiple lines

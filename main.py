@@ -5,8 +5,10 @@ o = OracleClass.OracleClass("antonio","prova")
 #o.insertRegion(n)
 #o.insertFormeJuridique(n)
 #o.insertCodeAPE(n)
-o.insertVille(n)
-o.showTable("ville")
-o.closeConnection()
+#o.insertVille(n)
+o.insertAddresse(n)
+#o.showTable("addresse")
+print("finito")
+#o.closeConnection()
 
 
