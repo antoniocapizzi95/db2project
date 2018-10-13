@@ -59,6 +59,7 @@ class OracleClass(object) :
         i = 0
         for elem in ville:
             regname = elem['region']
+            regname = regname.replace("'"," ")
             regname = regname.encode('ascii', 'ignore').decode('ascii')
             idreg = ''
             self.connection.execute('select id from region where name='+"'"+regname+"'")
@@ -67,11 +68,15 @@ class OracleClass(object) :
                 break
             index = str(i)
             idreg = str(idreg)
-
-            ins = "insert into ville (id,name,code_postal,id_region) values ('"+index+"',"+"'"+elem['ville']+"',"+"'"+elem['codepostal']+"',"+"'"+idreg+"')"
+            villeMod = elem['ville'].replace("'"," ")
+            ins = "insert into ville (id,name,code_postal,id_region) values ('"+index+"',"+"'"+villeMod+"',"+"'"+elem['codepostal']+"',"+"'"+idreg+"')"
             ins = ins.encode('ascii', 'ignore').decode('ascii')
-            self.connection.execute(ins)
+            try:
+                self.connection.execute(ins)
+            except:
+                print("Errore: "+ins)
             i = i + 1
+        self.conn.commit()
 
     def showTable(self,tableName):
         self.connection.execute('select * from '+tableName)  # use triple quotes if you want to spread your query across multiple lines

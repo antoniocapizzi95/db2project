@@ -34,7 +34,7 @@ class Neo4jClass(object):
     def getVille(self):
         ville = []
 
-        ris = self.graph.run("MATCH p=(:Ville)-[r:HAS_REGION]->() RETURN p LIMIT 5").data()
+        ris = self.graph.run("MATCH p=(:Ville)-[r:HAS_REGION]->() RETURN p").data()
         for elem in ris:
             nodeville = elem['p'].nodes[0]
             nodereg = elem['p'].nodes[1]
