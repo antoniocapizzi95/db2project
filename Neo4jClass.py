@@ -47,7 +47,7 @@ class Neo4jClass(object):
             nodereg = elem['p'].nodes[1]
             villename = nodeville['name']
             villename = villename.lower()
-            #villeid = nodeville.identity
+            villeid = nodeville.identity
             regname = nodereg['name']
 
             #riscodepostal = []
@@ -62,7 +62,7 @@ class Neo4jClass(object):
 
             if len(ville) == 0:
                 #ville.append({'ville': villename, 'region': regname, 'codepostal': codepostal})
-                ville.append({'ville': villename, 'region': regname})
+                ville.append({'id':villeid,'ville': villename, 'region': regname})
             else:
                 add = 0
                 for e in ville:
@@ -73,7 +73,7 @@ class Neo4jClass(object):
                         add = 1
                 if add == 1:
                     #ville.append({'ville': villename, 'region': regname, 'codepostal': codepostal})
-                    ville.append({'ville': villename, 'region': regname})
+                    ville.append({'id':villeid,'ville': villename, 'region': regname})
 
         return ville
 
@@ -86,6 +86,7 @@ class Neo4jClass(object):
             addressename = nodeaddresse['name']
             addressename = addressename.lower()
             codepostalname = nodecodepostal['name']
+            idaddresse = nodeaddresse.identity
             idcodepost = nodecodepostal.identity
             ris_ville = self.graph.run("MATCH p=(c:CodePostal)-[r:HAS_CITY]->() WHERE ID(c) ="+str(idcodepost)+" RETURN p").data()[0]
             nodeville = ris_ville['p'].nodes[1]
@@ -93,7 +94,7 @@ class Neo4jClass(object):
             ville = ville.lower()
 
             if len(addresse) == 0:
-                addresse.append({'addresse': addressename, 'codepostal': codepostalname,'ville':ville})
+                addresse.append({'id':idaddresse,'addresse': addressename, 'codepostal': codepostalname,'ville':ville})
             else:
                 add = 0
                 for e in addresse:
@@ -103,7 +104,7 @@ class Neo4jClass(object):
                     else:
                         add = 1
                 if add == 1:
-                    addresse.append({'addresse': addressename, 'codepostal': codepostalname, 'ville': ville})
+                    addresse.append({'id': idaddresse, 'addresse': addressename, 'codepostal': codepostalname, 'ville': ville})
         return addresse
 
     def getCompany(self,oracle):
@@ -162,8 +163,9 @@ class Neo4jClass(object):
         ris_adresse = self.graph.run("MATCH p=(c:Company)-[r:HAS_ADRESSE]->() WHERE ID(c) = " + str(id) + " RETURN p").data()[0]
         node_adresse = ris_adresse['p'].nodes[1]
         adresse = node_adresse['name']
+        id = node_adresse.identity
         adresse = adresse.replace("'", " ")
-        query = "select id from addresse where addresse = " + "'" + adresse + "'"
+        query = "select id from addresse where id = " + "'" + str(id) + "'"
         query = query.encode('ascii', 'ignore').decode('ascii')
         oracle.connection.execute(query)
         id_adresse = ''
@@ -171,4 +173,6 @@ class Neo4jClass(object):
             id_adresse = row[0]
             id_adresse = str(id_adresse)
             break
+        if id == id_adresse:
+            print("successo")
         return id_adresse

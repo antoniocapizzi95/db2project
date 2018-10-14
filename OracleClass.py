@@ -62,7 +62,7 @@ class OracleClass(object) :
             for row in self.connection:
                 idreg = row[0]
                 break
-            index = str(i)
+            index = str(elem['id'])
             idreg = str(idreg)
             villeMod = elem['ville'].replace("'"," ")
             #ins = "insert into ville (id,name,code_postal,id_region) values ('"+index+"',"+"'"+villeMod+"',"+"'"+elem['codepostal']+"',"+"'"+idreg+"')"
@@ -72,12 +72,10 @@ class OracleClass(object) :
                 self.connection.execute(ins)
             except:
                 print("Errore: "+ins)
-            i = i + 1
         self.conn.commit()
 
     def insertAddresse(self,n4j):
         addresse = n4j.getAddresse()
-        i = 0
         for elem in addresse:
             ville = elem['ville']
             ville = ville.replace("'"," ")
@@ -89,7 +87,7 @@ class OracleClass(object) :
                 break
             if idville == '':
                 print("Errore, nessun id "+ville)
-            index = str(i)
+            index = str(elem['id'])
             idville = str(idville)
             addresseMod = elem['addresse'].replace("'"," ")
             ins = "insert into addresse (id,name,id_ville,code_postal) values ("+"'"+index+"',"+"'"+addresseMod+"',"+"'"+idville+"',"+"'"+elem['codepostal']+"'"+")"
@@ -98,7 +96,6 @@ class OracleClass(object) :
                 self.connection.execute(ins)
             except:
                 print("Errore: "+ins)
-            i = i + 1
         self.conn.commit()
 
     def showTable(self,tableName):
