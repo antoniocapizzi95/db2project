@@ -17,41 +17,37 @@ class OracleClass(object) :
 
     def insertRegion(self,n4j):
         region = n4j.getRegion()
-        i = 0
         #ins = "insert into region (id,name) values (0,'test')"
         #self.connection.execute(ins)
         for elem in region:
-            elemMod = elem.replace("'"," ")
-            index = str(i)
+            elemMod = elem['name'].replace("'"," ")
+            index = elem['id']
+            index = str(index)
             ins = "insert into region (id,name) values ("+index+","+"'"+elemMod+"'"+")"
             ins = ins.encode('ascii', 'ignore').decode('ascii')
             self.connection.execute(ins)
-            i = i + 1
         self.conn.commit()
 
     def insertFormeJuridique(self,n4j):
         formejur = n4j.getFormeJuridique()
-        i = 0
+
         for elem in formejur:
-            elemMod = elem.replace("'"," ")
-            index = str(i)
+            elemMod = elem['name'].replace("'"," ")
+            index = str(elem['id'])
             ins = "insert into forme_juridique (id,name) values ("+index+","+"'"+elemMod+"'"+")"
             ins = ins.encode('ascii', 'ignore').decode('ascii')
             self.connection.execute(ins)
-            i = i + 1
         self.conn.commit()
 
     def insertCodeAPE(self, n4j):
         codeape = n4j.getCodeApe()
-        i = 0
         for elem in codeape:
-            code = elem['c.code']
-            name = elem['c.name'].replace("'", " ")
-            index = str(i)
+            code = elem['code']
+            name = elem['name'].replace("'", " ")
+            index = str(elem['id'])
             ins = "insert into code_ape (id,code,name) values (" + index + "," + "'" + code + "'" +","+ "'" +name+ "'" +")"
             ins = ins.encode('ascii', 'ignore').decode('ascii')
             self.connection.execute(ins)
-            i = i + 1
         self.conn.commit()
 
     def insertVille(self, n4j): #to complete

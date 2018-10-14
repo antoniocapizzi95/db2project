@@ -8,27 +8,34 @@ class Neo4jClass(object):
         self.graph = Graph(uri, auth=(user, password))
 
     def getRegion(self):
-        ris = self.graph.run("MATCH (r:Region) RETURN r.name").data()
+        ris = self.graph.run("MATCH (r:Region) RETURN r").data()
         l = []
         for elem in ris:
-            e = elem['r.name']
-            l.append(e)
+            node = elem['r']
+            name = node['name']
+            id = node.identity
+            l.append({'id':id,'name':name})
         return l
 
     def getFormeJuridique(self):
-        ris = self.graph.run("MATCH (f:FormeJuridique) RETURN f.name").data()
+        ris = self.graph.run("MATCH (f:FormeJuridique) RETURN f").data()
         l = []
         for elem in ris:
-            e = elem['f.name']
-            l.append(e)
+            node = elem['f']
+            name = node['name']
+            id = node.identity
+            l.append({'id':id,'name':name})
         return l
 
     def getCodeApe(self):
-        ris = self.graph.run("MATCH (c:CodeAPE) RETURN c.code,c.name").data()
+        ris = self.graph.run("MATCH (c:CodeAPE) RETURN c").data()
         l = []
         for elem in ris:
-            e = elem
-            l.append(e)
+            node = elem['c']
+            name = node['name']
+            code = node['code']
+            id = node.identity
+            l.append({'id':id,'code':code,'name':name})
         return l
 
     def getVille(self):
@@ -70,10 +77,9 @@ class Neo4jClass(object):
 
         return ville
 
-    def getAddresse(self): #to complete
+    def getAddresse(self):
         addresse = []
         ris = self.graph.run("MATCH p=(:Adresse)-[r:HAS_CODEPOSTAL]->() RETURN p").data()
-        print("query completata")
         for elem in ris:
             nodeaddresse = elem['p'].nodes[0]
             nodecodepostal = elem['p'].nodes[1]
@@ -99,3 +105,70 @@ class Neo4jClass(object):
                 if add == 1:
                     addresse.append({'addresse': addressename, 'codepostal': codepostalname, 'ville': ville})
         return addresse
+
+    def getCompany(self,oracle):
+        company = []
+        ris = self.graph.run("MATCH (n:Company) RETURN n LIMIT 25").data()
+        i = 0
+        for elem in ris:
+            nodecompany = elem['n'].nodes[0]
+            denomination = nodecompany['Denomination']
+            geoloc = nodecompany['Geolocalisation']
+            fiche_ent = nodecompany['FicheEnterprise']
+            date_imm = nodecompany['DateImmatriculation']
+            greffe = nodecompany['Greffe']
+            code_siren = nodecompany['CodeSiren']
+            id = nodecompany.identity
+            id_formejur = self.getIDFormeJurForCompany(id,oracle)
+            id_codeape = self.getIDCodeAPEForCompany(id,oracle)
+            id_adresse = self.getIDAddresseForCompany(id,oracle)
+            index = str(i)
+            ins = "insert into company (id, denomination, code_siren, date_immatriculation, fiche_enterprise, geolocalisation, greffe. id_addresse, id_formjur, id_codeape) values"
+
+
+
+
+    def getIDFormeJurForCompany(self,id,oracle):
+        ris_formejur = self.graph.run("MATCH p=(c:Company)-[r:HAS_FORMEJURIDIQUE]->() WHERE ID(c) = " + str(id) + " RETURN p").data()[0]
+        node_formejur = ris_formejur['p'].nodes[1]
+        name = node_formejur['name']
+        name = name.replace("'", " ")
+        query = "select id from forme_juridique where name = " + "'" + name + "'"
+        query = query.encode('ascii', 'ignore').decode('ascii')
+        oracle.connection.execute(query)
+        id_formejur = ''
+        for row in oracle.connection:
+            id_formejur = row[0]
+            id_formejur = str(id_formejur)
+            break
+        return id_formejur
+
+    def getIDCodeAPEForCompany(self,id,oracle):
+        ris_codeape = self.graph.run("MATCH p=(c:Company)-[r:HAS_CODEAPE]->() WHERE ID(c) = " + str(id) + " RETURN p").data()[0]
+        node_codeape = ris_codeape['p'].nodes[1]
+        code = node_codeape['code']
+        code = code.replace("'", " ")
+        query = "select id from code_ape where code = " + "'" + code + "'"
+        query = query.encode('ascii', 'ignore').decode('ascii')
+        oracle.connection.execute(query)
+        id_code = ''
+        for row in oracle.connection:
+            id_code = row[0]
+            id_code = str(id_code)
+            break
+        return id_code
+
+    def getIDAddresseForCompany(self,id,oracle):
+        ris_adresse = self.graph.run("MATCH p=(c:Company)-[r:HAS_ADRESSE]->() WHERE ID(c) = " + str(id) + " RETURN p").data()[0]
+        node_adresse = ris_adresse['p'].nodes[1]
+        adresse = node_adresse['name']
+        adresse = adresse.replace("'", " ")
+        query = "select id from addresse where addresse = " + "'" + adresse + "'"
+        query = query.encode('ascii', 'ignore').decode('ascii')
+        oracle.connection.execute(query)
+        id_adresse = ''
+        for row in oracle.connection:
+            id_adresse = row[0]
+            id_adresse = str(id_adresse)
+            break
+        return id_adresse
