@@ -80,7 +80,6 @@ class OracleClass(object) :
         self.conn.commit()
 
     def insertAddresse(self,n4j):
-        print("insertAddresse inizio")
         addresse = n4j.getAddresse()
         i = 0
         for elem in addresse:
@@ -99,6 +98,12 @@ class OracleClass(object) :
             addresseMod = elem['addresse'].replace("'"," ")
             ins = "insert into addresse (id,name,id_ville,code_postal) values ("+"'"+index+"',"+"'"+addresseMod+"',"+"'"+idville+"',"+"'"+elem['codepostal']+"'"+")"
             ins = ins.encode('ascii', 'ignore').decode('ascii')
+            try:
+                self.connection.execute(ins)
+            except:
+                print("Errore: "+ins)
+            i = i + 1
+        self.conn.commit()
 
     def showTable(self,tableName):
         self.connection.execute('select * from '+tableName)  # use triple quotes if you want to spread your query across multiple lines

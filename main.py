@@ -7,8 +7,8 @@ o = OracleClass.OracleClass("antonio","prova")
 #o.insertCodeAPE(n)
 #o.insertVille(n)
 o.insertAddresse(n)
-#o.showTable("addresse")
-print("finito")
-#o.closeConnection()
+o.showTable("addresse")
+#print("finito")
+o.closeConnection()
 
 

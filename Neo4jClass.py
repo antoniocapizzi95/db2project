@@ -73,6 +73,7 @@ class Neo4jClass(object):
     def getAddresse(self): #to complete
         addresse = []
         ris = self.graph.run("MATCH p=(:Adresse)-[r:HAS_CODEPOSTAL]->() RETURN p").data()
+        print("query completata")
         for elem in ris:
             nodeaddresse = elem['p'].nodes[0]
             nodecodepostal = elem['p'].nodes[1]
