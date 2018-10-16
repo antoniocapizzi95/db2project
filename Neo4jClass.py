@@ -110,7 +110,6 @@ class Neo4jClass(object):
     def getCompany(self,oracle):
         company = []
         ris = self.graph.run("MATCH (n:Company) RETURN n LIMIT 25").data()
-        i = 0
         for elem in ris:
             nodecompany = elem['n'].nodes[0]
             denomination = nodecompany['Denomination']
@@ -123,8 +122,20 @@ class Neo4jClass(object):
             id_formejur = self.getIDFormeJurForCompany(id,oracle)
             id_codeape = self.getIDCodeAPEForCompany(id,oracle)
             id_adresse = self.getIDAddresseForCompany(id,oracle)
-            index = str(i)
-            ins = "insert into company (id, denomination, code_siren, date_immatriculation, fiche_enterprise, geolocalisation, greffe. id_addresse, id_formjur, id_codeape) values"
+            if id_codeape == None:
+                id_codeape='NULL'
+            if fiche_ent == None:
+                fiche_ent = 'NULL'
+            #geoloc = geoloc.replace(","," -")
+            index = str(id)
+            values = "("+"'"+index+"',"+ "'"+denomination+"',"+"'"+code_siren+"',"+"'"+date_imm+"',"+"'"+fiche_ent+"',"+"'"+geoloc+"',"+"'"+greffe+"',"+"'"+id_adresse+"',"+"'"+id_formejur+"',"+"'"+id_codeape+"'"+ ")"
+            ins = "insert into company (id, denomination, code_siren, date_immatriculation, fiche_enterprise, geolocalisation, greffe, id_addresse, id_formjur, id_codeape) values "+values
+            ins = ins.encode('ascii', 'ignore').decode('ascii')
+            try:
+                oracle.connection.execute(ins)
+            except:
+                print("Errore: "+ins)
+
 
 
 
@@ -145,19 +156,26 @@ class Neo4jClass(object):
         return id_formejur
 
     def getIDCodeAPEForCompany(self,id,oracle):
-        ris_codeape = self.graph.run("MATCH p=(c:Company)-[r:HAS_CODEAPE]->() WHERE ID(c) = " + str(id) + " RETURN p").data()[0]
-        node_codeape = ris_codeape['p'].nodes[1]
-        code = node_codeape['code']
-        code = code.replace("'", " ")
-        query = "select id from code_ape where code = " + "'" + code + "'"
-        query = query.encode('ascii', 'ignore').decode('ascii')
-        oracle.connection.execute(query)
-        id_code = ''
-        for row in oracle.connection:
-            id_code = row[0]
-            id_code = str(id_code)
-            break
-        return id_code
+        code = ''
+        try:
+            ris_codeape = self.graph.run("MATCH p=(c:Company)-[r:HAS_CODEAPE]->() WHERE ID(c) = " + str(id) + " RETURN p").data()[0]
+            node_codeape = ris_codeape['p'].nodes[1]
+            code = node_codeape['code']
+            code = code.replace("'", " ")
+        except:
+            code = None
+        if code != None:
+            query = "select id from code_ape where code = " + "'" + code + "'"
+            query = query.encode('ascii', 'ignore').decode('ascii')
+            oracle.connection.execute(query)
+            id_code = ''
+            for row in oracle.connection:
+                id_code = row[0]
+                id_code = str(id_code)
+                break
+            return id_code
+        else:
+            return code
 
     def getIDAddresseForCompany(self,id,oracle):
         ris_adresse = self.graph.run("MATCH p=(c:Company)-[r:HAS_ADRESSE]->() WHERE ID(c) = " + str(id) + " RETURN p").data()[0]
@@ -173,6 +191,6 @@ class Neo4jClass(object):
             id_adresse = row[0]
             id_adresse = str(id_adresse)
             break
-        if id == id_adresse:
+        if str(id) == id_adresse:
             print("successo")
         return id_adresse
