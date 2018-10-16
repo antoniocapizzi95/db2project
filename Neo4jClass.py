@@ -113,7 +113,7 @@ class Neo4jClass(object):
             nodecompany = elem['n'].nodes[0]
             denomination = nodecompany['Denomination']
             geoloc = nodecompany['Geolocalisation']
-            fiche_ent = nodecompany['FicheEnterprise']
+            fiche_ent = nodecompany['FicheEntreprise']
             date_imm = nodecompany['DateImmatriculation']
             greffe = nodecompany['Greffe']
             code_siren = nodecompany['CodeSiren']
@@ -170,7 +170,6 @@ class Neo4jClass(object):
 
 
     def getIDCodeAPEForCompany(self,id,oracle):
-        code = ''
         try:
             ris_codeape = self.graph.run("MATCH p=(c:Company)-[r:HAS_CODEAPE]->() WHERE ID(c) = " + str(id) + " RETURN p").data()[0]
             node_codeape = ris_codeape['p'].nodes[1]
