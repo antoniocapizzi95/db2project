@@ -1,11 +1,34 @@
-from neo4j.v1 import GraphDatabase
+from neo4j.v1 import GraphDatabase,basic_auth
 from py2neo import Graph, Path
+import csv
 
 
 class Neo4jClass(object):
 
     def __init__(self, uri, user, password):
         self.graph = Graph(uri, auth=(user, password))
+
+    def testQuery(self):
+        uri = "bolt://localhost:7687"
+        auth_token = basic_auth("neo4j", "prova")
+        driver = GraphDatabase.driver(uri, auth=auth_token)
+
+        session = driver.session()
+
+        q = "MATCH (n:Company) RETURN n"
+        l = []
+        for i in range(30):
+            result = session.run(q)
+            #print(result.result_available_after)
+            avail = result.summary().result_available_after
+            cons = result.summary().result_consumed_after
+            total_time = avail + cons
+            l.append(str(total_time))
+            print(str(total_time) + " ms")
+        with open('output.csv', 'w') as csvfile:
+            csvwriter = csv.writer(csvfile)
+            for row in l:
+                csvwriter.writerow(row)
 
     def getRegion(self):
         ris = self.graph.run("MATCH (r:Region) RETURN r").data()
