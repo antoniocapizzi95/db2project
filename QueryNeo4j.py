@@ -17,9 +17,9 @@ class QueryNeo4j(object) :
     def chooseQuery(self,number):
         switcher = {
             1: "MATCH (n:Company) where n.DateImmatriculation>'2014-10-01' and n.DateImmatriculation>'2015-04-01' RETURN n",
-            2: "",
-            3: "",
-            4: "April",
+            2: "MATCH p=(c:Company)-[r:HAS_CODEAPE]->(a:CodeAPE) RETURN a.name AS CodeAPEName, count(c.Denomination) AS Company",
+            3: "MATCH p=(c:Company)-[r:HAS_FORMEJURIDIQUE]->(), s=(c:Company)-[f:HAS_CODEAPE]->() RETURN p,s",
+            4: "MATCH p=(c:Company)-[r:HAS_ADRESSE]->(a:Adresse),g=(a)-[:HAS_CODEPOSTAL]->(co:CodePostal),f=(co)-[:HAS_CITY]->() RETURN p,g,f",
             5: "May",
             6: "June",
             7: "July"
