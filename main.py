@@ -12,7 +12,7 @@ qo = QueryOracle.QueryOracle()
 #o.insertVille(n)
 #o.insertAddresse(n)
 #n.getCompany(o)
-for i in range(1,5):
+for i in range(1,8):
     qn.query1(n,i)
     qo.query(o,i)
 #o.showTable("addresse")
