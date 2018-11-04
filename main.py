@@ -9,7 +9,7 @@ qo = QueryOracle.QueryOracle()
 #o.insertRegion(n)
 #o.insertFormeJuridique(n)
 #o.insertCodeAPE(n)
-#o.insertVille(n)
+#[o.insertVille(n)
 #o.insertAddresse(n)
 #n.getCompany(o)
 for i in range(1,8):
