@@ -11,7 +11,7 @@ class QueryNeo4j(object) :
             result = (after - before) * 1000
             print(result)
             l.append(str(result))
-        self.writeCsv("Neo4j",str(queryNum),"100",l)
+        self.writeCsv("Neo4j",str(queryNum),"10000",l)
 
 
     def chooseQuery(self,number):
@@ -21,8 +21,8 @@ class QueryNeo4j(object) :
             3: "MATCH p=(c:Company)-[r:HAS_FORMEJURIDIQUE]->(), s=(c:Company)-[f:HAS_CODEAPE]->() RETURN p,s",
             4: "MATCH p=(c:Company)-[r:HAS_ADRESSE]->(a:Adresse),g=(a)-[:HAS_CODEPOSTAL]->(co:CodePostal),f=(co)-[:HAS_CITY]->() RETURN p,g,f",
             5: "MATCH f=(c:Company)-[r:HAS_FORMEJURIDIQUE]->(fo:FormeJuridique),co=(c)-[:HAS_CODEAPE]->(ape:CodeAPE), ad=(c)-[:HAS_ADRESSE]->(a:Adresse), cp=(a)-[:HAS_CODEPOSTAL]->(cod:CodePostal) WHERE cod.name='77380' RETURN fo as Forme_juridique, ape as CodeAPE",
-            6: "MATCH p=(c:Company)-[r:HAS_FORMEJURIDIQUE]->(fj:FormeJuridique),a=(c)-[:HAS_ADRESSE]->(add:Adresse),s=(add)-[:HAS_CODEPOSTAL]->(co:CodePostal),f=(co)-[:HAS_CITY]->(ci:Ville),g=(ci)-[:HAS_REGION]->(re:Region) WHERE ID(re)=532 RETURN fj,count(c)",
-            7: "MATCH p=(c:Company)-[r:HAS_FORMEJURIDIQUE]->(fj:FormeJuridique), ca=(c)-[:HAS_CODEAPE]->(coa:CodeAPE),a=(c)-[:HAS_ADRESSE]->(add:Adresse),s=(add)-[:HAS_CODEPOSTAL]->(co:CodePostal),f=(co)-[:HAS_CITY]->(ci:Ville),g=(ci)-[:HAS_REGION]->(re:Region) WHERE ID(ci)>=373 AND ID(ci)<=490 AND ID(re)>=319 AND ID(re)<=605 RETURN fj as Forme_juridique,coa as CodeAPE,c as Company"
+            6: "MATCH p=(c:Company)-[r:HAS_FORMEJURIDIQUE]->(fj:FormeJuridique),a=(c)-[:HAS_ADRESSE]->(add:Adresse),s=(add)-[:HAS_CODEPOSTAL]->(co:CodePostal),f=(co)-[:HAS_CITY]->(ci:Ville),g=(ci)-[:HAS_REGION]->(re:Region) WHERE ID(re)=10793 RETURN fj,count(c)",
+            7: "MATCH p=(c:Company)-[r:HAS_FORMEJURIDIQUE]->(fj:FormeJuridique), ca=(c)-[:HAS_CODEAPE]->(coa:CodeAPE),a=(c)-[:HAS_ADRESSE]->(add:Adresse),s=(add)-[:HAS_CODEPOSTAL]->(co:CodePostal),f=(co)-[:HAS_CITY]->(ci:Ville),g=(ci)-[:HAS_REGION]->(re:Region) WHERE ID(ci)>=2619 AND ID(ci)<=3977 AND ID(re)>=3943 AND ID(re)<=4877 RETURN fj as Forme_juridique,coa as CodeAPE,c as Company"
         }
         return switcher.get(number)
 
