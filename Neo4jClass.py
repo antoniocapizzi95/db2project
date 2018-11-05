@@ -130,6 +130,56 @@ class Neo4jClass(object):
                     addresse.append({'id': idaddresse, 'addresse': addressename, 'codepostal': codepostalname, 'ville': ville})
         return addresse
 
+    def getAddresse2(self, oracle):
+        ris = self.graph.run("MATCH p=(:Adresse)-[r:HAS_CODEPOSTAL]->() RETURN p").data()
+        for elem in ris:
+            nodeaddresse = elem['p'].nodes[0]
+            nodecodepostal = elem['p'].nodes[1]
+            addressename = nodeaddresse['name']
+            addressename = addressename.lower()
+            codepostalname = nodecodepostal['name']
+            idaddresse = nodeaddresse.identity
+            idcodepost = nodecodepostal.identity
+            ris_ville = self.graph.run("MATCH p=(c:CodePostal)-[r:HAS_CITY]->() WHERE ID(c) ="+str(idcodepost)+" RETURN p").data()[0]
+            nodeville = ris_ville['p'].nodes[1]
+            ville = nodeville['name']
+            ville = ville.lower()
+            ville = ville.replace("'", " ")
+            ville = ville.encode('ascii', 'ignore').decode('ascii')
+            idville = ''
+            oracle.connection.execute('select id from ville where name=' + "'" + ville + "'")
+            for row in oracle.connection:
+                idville = row[0]
+                break
+            if idville == '':
+                print("Errore, nessun id " + ville)
+
+            index = str(idaddresse)
+            idville = str(idville)
+            addresseMod = addressename.replace("'", " ")
+            ins = "insert into addresse (id,name,id_ville,code_postal) values (" + "'" + index + "'," + "'" + addresseMod + "'," + "'" + idville + "'," + "'" + \
+                  codepostalname + "'" + ")"
+            ins = ins.encode('ascii', 'ignore').decode('ascii')
+            try:
+                oracle.connection.execute(ins)
+            except:
+                print("Errore: " + ins)
+
+            """if len(addresse) == 0:
+                addresse.append({'id':idaddresse,'addresse': addressename, 'codepostal': codepostalname,'ville':ville})
+            else:
+                add = 0
+                for e in addresse:
+                    if addressename == e['addresse']:
+                        add = 0
+                        break
+                    else:
+                        add = 1
+                if add == 1:
+                    addresse.append({'id': idaddresse, 'addresse': addressename, 'codepostal': codepostalname, 'ville': ville})
+        return addresse"""
+        oracle.conn.commit()
+
     def getCompany(self,oracle):
         ris = self.graph.run("MATCH (n:Company) RETURN n").data()
         for elem in ris:

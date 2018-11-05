@@ -9,12 +9,13 @@ qo = QueryOracle.QueryOracle()
 #o.insertRegion(n)
 #o.insertFormeJuridique(n)
 #o.insertCodeAPE(n)
-#[o.insertVille(n)
+#o.insertVille(n)
 #o.insertAddresse(n)
+n.getAddresse2(o)
 #n.getCompany(o)
-for i in range(1,8):
+"""for i in range(1,8):
     qn.query1(n,i)
-    qo.query(o,i)
+    qo.query(o,i)"""
 #o.showTable("addresse")
 #print("finito")
 o.closeConnection()
