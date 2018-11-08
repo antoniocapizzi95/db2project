@@ -1,7 +1,7 @@
 from time import time
 import csv
 class QueryNeo4j(object) :
-    def query1(self,n4j,queryNum):
+    def query(self,n4j,queryNum):
         query = self.chooseQuery(queryNum)
         l = []
         for i in range(31):
@@ -9,14 +9,14 @@ class QueryNeo4j(object) :
             n4j.graph.run(query)
             after = time()
             result = (after - before) * 1000
-            print(result)
+            print(str(result) + " neo4j query" + str(queryNum))
             l.append(str(result))
-        self.writeCsv("Neo4j",str(queryNum),"100000",l)
+        self.writeCsv("Neo4j",str(queryNum),"100",l)
 
 
     def chooseQuery(self,number):
         switcher = {
-            1: "MATCH (n:Company) where n.DateImmatriculation>'2014-10-01' and n.DateImmatriculation>'2015-04-01' RETURN n",
+            1: "MATCH (n:Company) where n.DateImmatriculation>'2014-10-01' and n.DateImmatriculation<'2015-04-01' RETURN n",
             2: "MATCH p=(c:Company)-[r:HAS_CODEAPE]->(a:CodeAPE) RETURN a.name AS CodeAPEName, count(c.Denomination) AS Company",
             3: "MATCH p=(c:Company)-[r:HAS_FORMEJURIDIQUE]->(), s=(c:Company)-[f:HAS_CODEAPE]->() RETURN p,s",
             4: "MATCH p=(c:Company)-[r:HAS_ADRESSE]->(a:Adresse),g=(a)-[:HAS_CODEPOSTAL]->(co:CodePostal),f=(co)-[:HAS_CITY]->() RETURN p,g,f",

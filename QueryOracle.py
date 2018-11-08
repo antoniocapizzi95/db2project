@@ -9,9 +9,9 @@ class QueryOracle(object) :
             orac.connection.execute(query)
             after = time()
             result = (after - before) * 1000
-            print(result)
+            print(str(result) + " oracle query"+str(queryNum))
             l.append(str(result))
-        self.writeCsv("Oracle",str(queryNum),"100000",l)
+        self.writeCsv("Oracle",str(queryNum),"100",l)
 
 
     def chooseQuery(self,number):
