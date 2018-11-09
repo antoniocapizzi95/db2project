@@ -1,12 +1,21 @@
+from neo4j.v1 import GraphDatabase, basic_auth
+
 from time import time
 import csv
 class QueryNeo4j(object) :
-    def query(self,n4j,queryNum):
+
+    def __init__(self):
+        driver = GraphDatabase.driver("bolt://localhost:7687", auth = basic_auth("neo4j", "prova"))
+        self.session = driver.session()
+
+
+    def query(self,queryNum):
         query = self.chooseQuery(queryNum)
         l = []
         for i in range(31):
             before = time()
-            n4j.graph.run(query)
+            #n4j.graph.run(query)
+            test = self.session.run(query)
             after = time()
             result = (after - before) * 1000
             print(str(result) + " neo4j query" + str(queryNum))
@@ -18,7 +27,7 @@ class QueryNeo4j(object) :
         switcher = {
             1: "MATCH (n:Company) where n.DateImmatriculation>'2014-10-01' and n.DateImmatriculation<'2015-04-01' RETURN n",
             2: "MATCH p=(c:Company)-[r:HAS_CODEAPE]->(a:CodeAPE) RETURN a.name AS CodeAPEName, count(c.Denomination) AS Company",
-            3: "MATCH p=(c:Company)-[r:HAS_FORMEJURIDIQUE]->(), s=(c:Company)-[f:HAS_CODEAPE]->() RETURN p,s",
+            3: "MATCH p=(c:Company)-[r:HAS_FORMEJURIDIQUE]->(), s=(c)-[f:HAS_CODEAPE]->() RETURN p,s",
             4: "MATCH p=(c:Company)-[r:HAS_ADRESSE]->(a:Adresse),g=(a)-[:HAS_CODEPOSTAL]->(co:CodePostal),f=(co)-[:HAS_CITY]->() RETURN p,g,f",
             5: "MATCH f=(c:Company)-[r:HAS_FORMEJURIDIQUE]->(fo:FormeJuridique),co=(c)-[:HAS_CODEAPE]->(ape:CodeAPE), ad=(c)-[:HAS_ADRESSE]->(a:Adresse), cp=(a)-[:HAS_CODEPOSTAL]->(cod:CodePostal) WHERE cod.name='77380' RETURN fo as Forme_juridique, ape as CodeAPE",
             6: "MATCH p=(c:Company)-[r:HAS_FORMEJURIDIQUE]->(fj:FormeJuridique),a=(c)-[:HAS_ADRESSE]->(add:Adresse),s=(add)-[:HAS_CODEPOSTAL]->(co:CodePostal),f=(co)-[:HAS_CITY]->(ci:Ville),g=(ci)-[:HAS_REGION]->(re:Region) WHERE ID(re)=532 RETURN fj,count(c)",

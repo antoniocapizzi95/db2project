@@ -13,9 +13,10 @@ qo = QueryOracle.QueryOracle()
 #o.insertAddresse(n)
 #n.getAddresse2(o)
 #n.getCompany(o)
-for i in range(1,8):
-    #qn.query(n,i)
-    qo.query(o,i)
+#for i in range(1,8):
+    #qn.query(i)
+    #qo.query(o,i)
+qn.query(1)
 #o.showTable("addresse")
 #print("finito")
 o.closeConnection()
