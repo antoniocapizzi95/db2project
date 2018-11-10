@@ -5,8 +5,9 @@ class QueryOracle(object) :
         query = self.chooseQuery(queryNum)
         l = []
         for i in range(31):
+            l2 = []
             before = time()
-            orac.connection.execute(query)
+            cur = orac.connection.execute(query)
             after = time()
             result = (after - before) * 1000
             print(str(result) + " oracle query"+str(queryNum))
@@ -22,7 +23,7 @@ class QueryOracle(object) :
             4: "Select denomination, addresse.name as adresse,code_postal,ville.name as ville from company, addresse, ville, region where company.id_addresse = addresse.id and addresse.id_ville = ville.id and ville.id_region = region.id",
             5: "Select forme_juridique.name as Forme_juridique, code_ape.name as Code_APE From forme_juridique, code_ape, company, addresse Where company.id_formjur = forme_juridique.id AND company.id_codeape = code_ape.id AND company.id_addresse = addresse.id AND addresse.code_postal = '77380'",
             6: "Select forme_juridique.name as Form_juridique, count(company.id) as n From company, addresse, ville, region,forme_juridique Where company.id_formjur = forme_juridique.id AND company.id_addresse = addresse.id AND addresse.id_ville = ville.id AND ville.id_region = region.id and region.id= '532' GROUP BY forme_juridique.name",
-            7: "Select forme_juridique.name as Forme_juridique, code_ape.name as Code_APE, company.denomination as company From forme_juridique, code_ape, company, addresse, ville, region Where company.id_formjur = forme_juridique.id AND company.id_codeape = code_ape.id AND company.id_addresse = addresse.id AND addresse.id_ville = ville.id AND ville.id_region = region.id AND ville.id>='373' AND ville.id<='490' AND region.id>='319' AND region.id<='605'"
+            7: "Select forme_juridique.name as Forme_juridique, code_ape.name as Code_APE, company.denomination as company From forme_juridique, code_ape, company, addresse, ville, region Where company.id_formjur = forme_juridique.id AND company.id_codeape = code_ape.id AND company.id_addresse = addresse.id AND addresse.id_ville = ville.id AND ville.id_region = region.id AND region.id>='319' AND region.id<='585'"
         }
         return switcher.get(number)
 
